@@ -1,0 +1,9 @@
+{
+  "name": "hexbit-site",
+  "version": "1.0.0",
+  "description": "Hexbit marketing site — static HTML / React via in-browser Babel",
+  "private": true,
+  "scripts": {
+    "build": "echo 'No build step — static HTML.'"
+  }
+}
