@@ -107,22 +107,26 @@ function LangSwitch() {
 
 function Nav({ route }) {
   const { t } = useT();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => { setMenuOpen(false); }, [route]);
+
   const NavLink = ({ to, children }) =>
     h('a', {
       href: '#/' + to,
       className: route === to ? 'active' : '',
-      onClick: (e) => { e.preventDefault(); navigate(to); },
+      onClick: (e) => { e.preventDefault(); setMenuOpen(false); navigate(to); },
     }, children);
 
-  return h('header', { className: 'mk-nav' },
+  return h('header', { className: 'mk-nav' + (menuOpen ? ' menu-open' : '') },
     h('a', {
       href: '#/home',
       className: 'lock',
-      onClick: (e) => { e.preventDefault(); navigate('home'); },
+      onClick: (e) => { e.preventDefault(); setMenuOpen(false); navigate('home'); },
     },
       h('img', { src: 'assets/hexbit-logo-reverse.svg', alt: 'HEXBIT', style: { background: 'transparent' } })
     ),
-    h('nav', null,
+    h('nav', { className: menuOpen ? 'open' : '' },
       h(NavLink, { to: 'home' }, t('nav.home')),
       h(NavLink, { to: 'services' }, t('nav.services')),
       h(NavLink, { to: 'technology' }, t('nav.technology')),
@@ -135,8 +139,16 @@ function Nav({ route }) {
       h('a', {
         href: '#/contact',
         className: 'cta',
-        onClick: (e) => { e.preventDefault(); navigate('contact'); },
+        onClick: (e) => { e.preventDefault(); setMenuOpen(false); navigate('contact'); },
       }, t('nav.cta')),
+      h('button', {
+        className: 'mk-nav-burger',
+        onClick: () => setMenuOpen(o => !o),
+        'aria-label': 'Menu',
+        'aria-expanded': menuOpen,
+      },
+        h('i', { 'data-lucide': menuOpen ? 'x' : 'menu', style: { width: 20, height: 20 } })
+      ),
     )
   );
 }
@@ -154,8 +166,8 @@ function Footer() {
         h('p', null, t('footer.tagline')),
         h('div', { className: 'addr' },
           'Hexbit Pte. Ltd.', h('br'),
-          '1 Raffles Place, #20-61', h('br'),
-          'Singapore 048616'
+          '33A PAGODA STREET', h('br'),
+          '059192 SINGAPORE'
         )
       ),
       h('div', null,

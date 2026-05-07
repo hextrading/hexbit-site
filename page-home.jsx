@@ -204,7 +204,7 @@ function MetricStrip() {
 function LiveSpreadSection() {
   const { t } = useT();
   return h('section', { className: 'mk-section', id: 'live-spreads' },
-    h('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 64, alignItems: 'start' } },
+    h('div', { className: 'live-spread-grid' },
       h('div', null,
         h('span', { className: 'eyebrow' }, t('home.spreadLive')),
         h('h2', null, t('home.spreadTitle')),
@@ -227,7 +227,7 @@ function WhatWeDo() {
     h('span', { className: 'eyebrow' }, t('home.whatEyebrow')),
     h('h2', null, t('home.whatTitle')),
     h('p', { className: 'sec-lead' }, t('home.whatLead')),
-    h('div', { className: 'mk-features', style: { gridTemplateColumns: 'repeat(3, 1fr)' } },
+    h('div', { className: 'mk-features' },
       items.map((it, i) => h('div', { className: 'mk-feature', key: i },
         h('div', { className: 'icon' }, h('i', { 'data-lucide': icons[i], style: { width: 18, height: 18 } })),
         h('h3', null, it.t),

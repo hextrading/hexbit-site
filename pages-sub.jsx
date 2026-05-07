@@ -118,7 +118,7 @@ function CareersPage() {
     h('section', { className: 'mk-section' },
       h('span', { className: 'eyebrow' }, t('careers.cultureEyebrow')),
       h('h2', null, t('careers.cultureTitle')),
-      h('div', { className: 'value-grid', style: { gridTemplateColumns: 'repeat(3, 1fr)' } },
+      h('div', { className: 'value-grid' },
         culture.map((c, i) => h('div', { className: 'val', key: i },
           h('span', { className: 'n' }, c.n),
           h('h4', null, c.h),
@@ -150,104 +150,20 @@ function CareersPage() {
 }
 
 // ─── Contact ────────────────────────────────────────────
-function ContactForm() {
+const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScMoviI6s-xm5QxKLaOWlXVwH3I_LXrkG4YyHRbLKDujTAOBg/viewform';
+
+function ContactFormCTA() {
   const { t } = useT();
-  const [vals, setVals] = hUseState({ name: '', company: '', email: '', role: '', interest: '', notes: '' });
-  const [errs, setErrs] = hUseState({});
-  const [submitting, setSubmitting] = hUseState(false);
-  const [done, setDone] = hUseState(null); // { ref }
-
-  const set = (k, v) => {
-    setVals(s => ({ ...s, [k]: v }));
-    if (errs[k]) setErrs(e => { const c = { ...e }; delete c[k]; return c; });
-  };
-
-  const validate = () => {
-    const e = {};
-    const required = t('contact.form.errors.required');
-    if (!vals.name.trim()) e.name = required;
-    if (!vals.company.trim()) e.company = required;
-    if (!vals.email.trim()) e.email = required;
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vals.email.trim())) e.email = t('contact.form.errors.email');
-    if (!vals.interest.trim()) e.interest = required;
-    if (!vals.notes.trim()) e.notes = required;
-    setErrs(e);
-    return Object.keys(e).length === 0;
-  };
-
-  const submit = (ev) => {
-    ev.preventDefault();
-    if (!validate()) return;
-    setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      // Generate a mock reference like HX-2026-XXXX
-      const refId = 'HX-2026-' + Math.floor(1000 + Math.random() * 9000);
-      setDone({ ref: refId });
-    }, 900);
-  };
-
-  if (done) {
-    return h('div', { className: 'success-card' },
-      h('div', { className: 'ic' }, h('i', { 'data-lucide': 'check', style: { width: 22, height: 22 } })),
-      h('h3', null, t('contact.form.successTitle')),
-      h('p', null, t('contact.form.successBody')),
-      h('div', { className: 'ref' }, t('contact.form.successRef'), ' · ', h('b', null, done.ref)),
-      h('div', { style: { marginTop: 24 } },
-        h('a', { href: '#', onClick: (e) => { e.preventDefault(); setDone(null); setVals({ name: '', company: '', email: '', role: '', interest: '', notes: '' }); } },
-          t('contact.form.successAgain'))
-      )
-    );
-  }
-
-  const f = t('contact.form');
-
-  const Field = ({ name, label, required, children }) =>
-    h('div', { className: 'field' },
-      h('label', null, label, required && h('span', { className: 'req' }, '*')),
-      children,
-      errs[name] && h('span', { className: 'err-msg' }, errs[name])
-    );
-
-  const inp = (k) => ({
-    value: vals[k],
-    onChange: (e) => set(k, e.target.value),
-    className: errs[k] ? 'err' : '',
-  });
-
-  return h('form', { className: 'form', onSubmit: submit, noValidate: true },
-    h('h3', { style: { fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 500, margin: '0 0 6px', letterSpacing: '-0.01em' } }, f.title),
-    h('p', { style: { color: 'var(--fg-2)', fontSize: 14, margin: '0 0 24px', lineHeight: 1.55 } }, f.sub),
-
-    h('div', { className: 'row' },
-      h(Field, { name: 'name', label: f.name, required: true },
-        h('input', { type: 'text', ...inp('name'), autoComplete: 'name' })
-      ),
-      h(Field, { name: 'company', label: f.company, required: true },
-        h('input', { type: 'text', ...inp('company'), autoComplete: 'organization' })
-      )
-    ),
-    h('div', { className: 'row' },
-      h(Field, { name: 'email', label: f.email, required: true },
-        h('input', { type: 'email', ...inp('email'), autoComplete: 'email' })
-      ),
-      h(Field, { name: 'role', label: f.role },
-        h('input', { type: 'text', ...inp('role') })
-      )
-    ),
-    h(Field, { name: 'interest', label: f.interest, required: true },
-      h('select', { ...inp('interest') },
-        h('option', { value: '' }, '—'),
-        f.interestOpts.map((o, i) => h('option', { key: i, value: o }, o))
-      )
-    ),
-    h(Field, { name: 'notes', label: f.notes, required: true },
-      h('textarea', { ...inp('notes'), placeholder: f.notesPlaceholder })
-    ),
-    h('div', { className: 'submit' },
-      h('span', { className: 'footnote' }, f.consent),
-      h('button', { type: 'submit', disabled: submitting }, submitting ? f.submitting : f.submit)
-    )
+  const cta = t('contact.cta');
+  return h('div', { className: 'form contact-cta' },
+    h('h3', null, cta.title),
+    h('p', null, cta.body),
+    h('a', {
+      className: 'cta-btn',
+      href: GOOGLE_FORM_URL,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    }, cta.button)
   );
 }
 
@@ -258,7 +174,7 @@ function ContactPage() {
     h(PageHeader, { eyebrow: t('contact.eyebrow'), title: t('contact.title'), lead: t('contact.lead') }),
     h('div', { className: 'contact-grid' },
       h('div', { className: 'contact-info' },
-        ['partnerships', 'press', 'careers', 'hq', 'hours'].map(k =>
+        ['contact', 'hq', 'hours'].map(k =>
           h('div', { className: 'info-block', key: k },
             h('h3', null, info[k].l),
             (k === 'hq' || k === 'hours')
@@ -267,7 +183,7 @@ function ContactPage() {
           )
         )
       ),
-      h(ContactForm, null)
+      h(ContactFormCTA, null)
     )
   );
 }
